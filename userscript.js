@@ -114,3 +114,10 @@ function forIdInput() {
         targetDiv.appendChild(errorMessage);
     }
 }
+
+// set up the screens
+let screen=0;
+const inputWrap=document.createElement('div');
+inputWrap.id='input-wrapper';
+const inputID=document.createElement('input');
+inputID.id='projectID';
