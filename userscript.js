@@ -2,10 +2,15 @@
 const projectInput = document.getElementById('projectId');
 const targetDiv = document.getElementById('targets');
 const scriptsDiv = document.getElementById('scripts');
+const warn = document.getElementById('warning');
 
 // fetch project.json
 async function pullParse(id) {
     return (await fetch("https://projects.scratch.mit.edu/"+id+"/get")).json();
+}
+// fetch project social data
+async function pullSocial(id) {
+    return await fetch('https://api.scratch.mit.edu/projects/'+id);
 }
 
 // script for when input updates
@@ -13,6 +18,18 @@ function forIdInput() {
     
     // checks if input is empty or not
     if (projectInput.value) {
+        // pulls social data from Scratch API
+        pullSocial(projectInput.value).then(function (result) {
+            let json=result.json();
+            let created=new Date(json.history.created);
+            let release=new Date('2019-01-01 T 00:00:00.000 Z');
+            if (created<release) {
+                warn.style.display('flex');
+            } else {
+                warn.style.display('none');
+            }
+        });
+
         // pulls data from project.json
         pullParse(projectInput.value).then(function (result) {
             // reset all of div#targets
@@ -56,7 +73,7 @@ function forIdInput() {
                             hatBlock=document.createElement('p');
                             checkbox=document.createElement('input');
                             // set attr for checkbox
-                            checkbox.id=result.targets[selected].blocks[blocksArray[i]].opcode;
+                            checkbox.id=result.targets[selected].blocks[blocksArray[i]].parent;
                             console.log(result.targets[selected].blocks[blocksArray[i]].parent);
                             checkbox.type='checkbox';
                             // set hatBlockText to a string for editing

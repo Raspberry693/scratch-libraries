@@ -77,3 +77,19 @@ input[type='text']:focus {
     height: calc(100% - 200px);
     overflow-y: auto;
 }
+
+#warning {
+    padding:20px;
+    position: relative;
+    left:-10px;
+    bottom:50px;
+    border: #ffb2236b solid 1px;
+    border-radius: 0.25rem;
+    background-color: #ffb22336;
+    color:#be8418ab;
+    display: none;
+    flex-direction: row;
+}
+#warning > i {
+    padding-right: 10px;
+}
