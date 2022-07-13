@@ -61,6 +61,11 @@ function screenChange(screen) {
         dynamic.appendChild(inputWrap);
         projectInput.addEventListener('change', function() {
             projectId=this.value;
+            projectId=projectId.replace('https://','');
+            projectId=projectId.replace('http://','');
+            projectId=projectId.replace('scratch.mit.edu/','');
+            projectId=projectId.replace('projects','');
+            projectId=projectId.replace('/','');
         });
     } else if (screen==1) {
         // inject targets wrapper
@@ -117,14 +122,16 @@ function forIdInput() {
                     let blocksArray = Object.keys(result.targets[selected].blocks);
                     let hatBlock;
                     let hatBlockText;
-                    let hatBlockTextNew='define ';
+                    let hatBlockTextNew;
                     let argNames=[];
                     let checkbox;
                     let scriptWrapper;
+                    let blockWrapper;
                     // loop through different blocks in a sprite
                     for (let i=0;i<blocksArray.length;i++) {
                         // if the noticed block is of the correct id
                         if (result.targets[selected].blocks[blocksArray[i]].opcode=='procedures_prototype') {
+                            blockWrapper=document.createElement('div');
                             hatBlock=document.createElement('label');
                             checkbox=document.createElement('input');
                             scriptWrapper
@@ -138,7 +145,7 @@ function forIdInput() {
                             timesReplaced=0;
                             // different arguments in a custom block
                             argNames=result.targets[selected].blocks[blocksArray[i]].mutation.argumentnames.split(',');
-                            hatBlockTextNew='';
+                            hatBlockTextNew='define ';
                             // loop through and start changing the text
                             for (let i=0;i<hatBlockText.length;i++) {
                                 // if the noticed char is a %
@@ -162,8 +169,9 @@ function forIdInput() {
                                 }
                             }
                             hatBlock.innerText=hatBlockTextNew;
-                            scriptsDiv.appendChild(checkbox);
-                            scriptsDiv.appendChild(hatBlock);
+                            blockWrapper.appendChild(checkbox);
+                            blockWrapper.appendChild(hatBlock);
+                            scriptsDiv.appendChild(blockWrapper);
                         }
                     }
                 });
