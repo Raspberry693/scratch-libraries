@@ -29,7 +29,7 @@ hr {
     align-items: center;
     overflow-x: auto;
 }
-.target-button {
+.target-button, .nav-button {
     border-radius: 0.25rem;
     background: white;
     color:#575e75;
@@ -40,10 +40,10 @@ hr {
     margin-right: 0.5rem;
     transition: 0.3s;
 }
-.target-button:hover {
+.target-button:hover, .nav-button:hover {
     cursor: pointer;
 }
-.active {
+.target-button.active, .nav-button.active {
     border: hsla(215, 100%, 65%, 1);
     background: hsla(215, 100%, 65%, 1);
     color: white;
@@ -93,4 +93,19 @@ input[type='text']:focus {
 }
 #warning > i {
     padding-right: 10px;
+}
+
+#dynamic {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#modal-nav-wrapper {
+    width:50%;
+    position: absolute;
+    display: flex;
+    justify-content: right;
+    top:77%;
 }

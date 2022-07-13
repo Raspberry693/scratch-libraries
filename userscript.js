@@ -1,8 +1,79 @@
 // DOM references
-const projectInput = document.getElementById('projectId');
-const targetDiv = document.getElementById('targets');
-const scriptsDiv = document.getElementById('scripts');
-const warn = document.getElementById('warning');
+const dynamic = document.createElement('div');
+// const scriptsDiv = document.getElementById('scripts');
+// const warn = document.getElementById('warning');
+
+// set up the screens
+var screen=0;
+const inputWrap=document.createElement('div');
+const projectInput=document.createElement('input');
+const targetDiv=document.createElement('div');
+const scriptsDiv=document.createElement('div');
+
+// set up dynamic wrapper for screen
+dynamic.id='dynamic-content';
+document.getElementById('modal').appendChild(dynamic);
+
+// set up nav button wrapper
+const buttonWrapper=document.createElement('div');
+buttonWrapper.id='modal-nav-wrapper';
+document.getElementById('modal').appendChild(buttonWrapper);
+// set up back button
+const backButton=document.createElement('button');
+backButton.innerText='Back';
+backButton.id='modal-nav-back';
+backButton.className='nav-button';
+buttonWrapper.appendChild(backButton);
+backButton.addEventListener('click', function() {
+    if (screen>0) {
+        screen--;
+        screenChange(screen);
+    }
+});
+// set up next button
+const nextButton=document.createElement('button');
+nextButton.innerText='Next';
+nextButton.id='modal-nav-next';
+nextButton.className='nav-button active';
+buttonWrapper.appendChild(nextButton);
+nextButton.addEventListener('click', function() {
+    if (screen<2) {
+        screen++;
+        screenChange(screen);
+    }
+});
+
+var projectId;
+
+// screen scripts
+function screenChange(screen) {
+    // delete all of the dynamic children
+    for (let i=0;dynamic.hasChildNodes();i++) {
+        dynamic.removeChild(dynamic.firstChild);
+    }
+    if (screen==0) {
+        // inject input and wrapper
+        inputWrap.id='input-wrapper';
+        projectInput.id='projectID';
+        projectInput.setAttribute('placeholder', 'Project ID');
+        projectInput.setAttribute('type', 'text');
+        inputWrap.appendChild(projectInput);
+        dynamic.appendChild(inputWrap);
+        projectInput.addEventListener('change', function() {
+            projectId=this.value;
+        });
+    } else if (screen==1) {
+        // inject targets wrapper
+        targetDiv.id='targets';
+        dynamic.appendChild(targetDiv);
+        // inject scripts wrapper
+        scriptsDiv.id='scripts'
+        dynamic.appendChild(scriptsDiv);
+
+        // call for the main script to run
+        forIdInput();
+    }
+}
 
 // fetch project.json
 async function pullParse(id) {
@@ -11,11 +82,10 @@ async function pullParse(id) {
 
 // script for when input updates
 function forIdInput() {
-    
     // checks if input is empty or not
-    if (projectInput.value) {
+    if (projectId&&screen==1) {
         // pulls data from project.json
-        pullParse(projectInput.value).then(function (result) {
+        pullParse(projectId).then(function (result) {
             // reset all of div#targets
             while (targetDiv.hasChildNodes()) {
                 targetDiv.removeChild(targetDiv.firstChild);
@@ -115,9 +185,4 @@ function forIdInput() {
     }
 }
 
-// set up the screens
-let screen=0;
-const inputWrap=document.createElement('div');
-inputWrap.id='input-wrapper';
-const inputID=document.createElement('input');
-inputID.id='projectID';
+screenChange(screen);
