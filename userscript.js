@@ -10,7 +10,7 @@ async function pullParse(id) {
 }
 // fetch project social data
 async function pullSocial(id) {
-    return await fetch('https://api.scratch.mit.edu/projects/'+id);
+    return await fetch('https://cors-anywhere.herokuapp.com/https://api.scratch.mit.edu/projects/'+id);
 }
 
 // script for when input updates
