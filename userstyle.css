@@ -10,7 +10,8 @@ hr {
     border:hsla(0, 0%, 0%, 0.15) solid 1px;
     border-radius: 0.35rem;
     width:50%;
-    height:500px;
+    height:80%;
+    min-width: 450px;
     padding:20px;
 }
 #modal-wrapper {
@@ -54,7 +55,7 @@ hr {
     display: flex;
     align-items: center;
 }
-input {
+input[type='text'] {
     padding: 0 16px;
     height: 46px;
     width: 90%;
@@ -66,8 +67,13 @@ input {
     border: 1px solid var(--darkWww-border, rgba(0, 0, 0, 0.1));
     transition: 0.3s;
 }
-input:focus {
+input[type='text']:focus {
     background-color: white;
     border:hsla(215, 100%, 65%, 1) solid 2px;
     outline:rgba(77, 151, 255, 0.233) solid 3px;
+}
+
+#scripts {
+    height: calc(100% - 200px);
+    overflow-y: auto;
 }

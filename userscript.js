@@ -10,6 +10,7 @@ async function pullParse(id) {
 
 // script for when input updates
 function forIdInput() {
+    
     // checks if input is empty or not
     if (projectInput.value) {
         // pulls data from project.json
@@ -19,6 +20,7 @@ function forIdInput() {
                 targetDiv.removeChild(targetDiv.firstChild);
             }
 
+            // declare some vars for the DOM
             let targetButton;
             let selected=0;
             // insert sprite tabs
@@ -40,34 +42,53 @@ function forIdInput() {
                     while (scriptsDiv.hasChildNodes()) {
                         scriptsDiv.removeChild(scriptsDiv.firstChild);
                     }
-                    // insert block svgs
+                    // declare/reset variables
                     let blocksArray = Object.keys(result.targets[selected].blocks);
                     let hatBlock;
                     let hatBlockText;
                     let hatBlockTextNew='define ';
+                    let argNames=[];
+                    var checkbox;
+                    // loop through different blocks in a sprite
                     for (let i=0;i<blocksArray.length;i++) {
+                        // if the noticed block is of the correct id
                         if (result.targets[selected].blocks[blocksArray[i]].opcode=='procedures_prototype') {
                             hatBlock=document.createElement('p');
+                            checkbox=document.createElement('input');
+                            // set attr for checkbox
+                            checkbox.id=result.targets[selected].blocks[blocksArray[i]].opcode;
+                            console.log(result.targets[selected].blocks[blocksArray[i]].parent);
+                            checkbox.type='checkbox';
+                            // set hatBlockText to a string for editing
                             hatBlockText=result.targets[selected].blocks[blocksArray[i]].mutation.proccode;
-                            let timesReplaced=0;
-                            let argNames = result.targets[selected].blocks[blocksArray[i]].mutation.argumentnames.split(',');
-                            console.log(result.targets[selected].blocks[blocksArray[i]].mutation.argumentnames);
+                            timesReplaced=0;
+                            // different arguments in a custom block
+                            argNames=result.targets[selected].blocks[blocksArray[i]].mutation.argumentnames.split(',');
+                            hatBlockTextNew='';
+                            // loop through and start changing the text
                             for (let i=0;i<hatBlockText.length;i++) {
+                                // if the noticed char is a %
                                 if (hatBlockText.charAt(i)=='%') {
-                                    if (hatBlockText.charAt(i+1)=='s') {
+                                    // if it is %s
+                                    if (hatBlockText.charAt(i+1)=='s'||hatBlockText.charAt(i+1)=='n') {
+                                        // replace and setup for scratchblocks
                                         hatBlockTextNew += '['+argNames[timesReplaced].replace(/"|\[|\]/g, '')+']';
                                         timesReplaced++;
                                         i++;
+                                    // if it is %b
                                     } else {
+                                        // replace and setup for scratchblocks
                                         hatBlockTextNew += '<'+argNames[timesReplaced].replace(/"|\[|\]/g, '')+'>';
                                         timesReplaced++;
                                         i++;
                                     }
                                 } else {
+                                    // append the last noticed character
                                     hatBlockTextNew += hatBlockText.charAt(i);
                                 }
                             }
                             hatBlock.innerText=hatBlockTextNew;
+                            scriptsDiv.appendChild(checkbox);
                             scriptsDiv.appendChild(hatBlock);
                         }
                     }
@@ -77,10 +98,12 @@ function forIdInput() {
             }
         });
     } else {
+
         // clear all of div#targets
         while (targetDiv.hasChildNodes()) {
             targetDiv.removeChild(targetDiv.firstChild);
         }
+
         // insert empty message
         let errorMessage = document.createElement('p');
         errorMessage.innerText='Whoops! Nothing here...';
