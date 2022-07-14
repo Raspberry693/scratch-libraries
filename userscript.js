@@ -84,7 +84,7 @@ function screenChange(screen) {
 async function pullParse(id) {
     return (await fetch("https://projects.scratch.mit.edu/"+id+"/get")).json();
 }
-
+var selected;
 // script for when input updates
 function forIdInput() {
     // checks if input is empty or not
@@ -95,10 +95,14 @@ function forIdInput() {
             while (targetDiv.hasChildNodes()) {
                 targetDiv.removeChild(targetDiv.firstChild);
             }
+            // clear div#scripts
+            while (scriptsDiv.hasChildNodes()) {
+                scriptsDiv.removeChild(scriptsDiv.firstChild);
+            }
 
             // declare some vars for the DOM
             let targetButton;
-            let selected=0;
+            selected=0;
             // insert sprite tabs
             for (let i=0;i<result.targets.length;i++) {
                 targetButton = document.createElement('button');
@@ -108,75 +112,17 @@ function forIdInput() {
                 if (i==0) {
                     targetButton.classList.add('active');
                 }
-                targetButton.id = i;
+                targetButton.id = 'target-'+i;
                 // when clicked set as .active and clear all other elements' class of .active
                 targetButton.addEventListener('click', function() {
                     selected = this.id;
                     document.querySelector('.active').classList.remove('active');
                     this.classList.add('active');
-                    // clear div#scripts
-                    while (scriptsDiv.hasChildNodes()) {
-                        scriptsDiv.removeChild(scriptsDiv.firstChild);
-                    }
-                    // declare/reset variables
-                    let blocksArray = Object.keys(result.targets[selected].blocks);
-                    let hatBlock;
-                    let hatBlockText;
-                    let hatBlockTextNew;
-                    let argNames=[];
-                    let checkbox;
-                    let scriptWrapper;
-                    let blockWrapper;
-                    // loop through different blocks in a sprite
-                    for (let i=0;i<blocksArray.length;i++) {
-                        // if the noticed block is of the correct id
-                        if (result.targets[selected].blocks[blocksArray[i]].opcode=='procedures_prototype') {
-                            blockWrapper=document.createElement('div');
-                            hatBlock=document.createElement('label');
-                            checkbox=document.createElement('input');
-                            scriptWrapper
-                            // set attr for checkbox
-                            checkbox.id=result.targets[selected].blocks[blocksArray[i]].parent;
-                            checkbox.name=result.targets[selected].blocks[blocksArray[i]].parent;
-                            checkbox.type='checkbox';
-                            hatBlock.setAttribute('for', checkbox.name);
-                            // set hatBlockText to a string for editing
-                            hatBlockText=result.targets[selected].blocks[blocksArray[i]].mutation.proccode;
-                            timesReplaced=0;
-                            // different arguments in a custom block
-                            argNames=result.targets[selected].blocks[blocksArray[i]].mutation.argumentnames.split(',');
-                            hatBlockTextNew='define ';
-                            // loop through and start changing the text
-                            for (let i=0;i<hatBlockText.length;i++) {
-                                // if the noticed char is a %
-                                if (hatBlockText.charAt(i)=='%') {
-                                    // if it is %s
-                                    if (hatBlockText.charAt(i+1)=='s'||hatBlockText.charAt(i+1)=='n') {
-                                        // replace and setup for scratchblocks
-                                        hatBlockTextNew += '['+argNames[timesReplaced].replace(/"|\[|\]/g, '')+']';
-                                        timesReplaced++;
-                                        i++;
-                                    // if it is %b
-                                    } else {
-                                        // replace and setup for scratchblocks
-                                        hatBlockTextNew += '<'+argNames[timesReplaced].replace(/"|\[|\]/g, '')+'>';
-                                        timesReplaced++;
-                                        i++;
-                                    }
-                                } else {
-                                    // append the last noticed character
-                                    hatBlockTextNew += hatBlockText.charAt(i);
-                                }
-                            }
-                            hatBlock.innerText=hatBlockTextNew;
-                            blockWrapper.appendChild(checkbox);
-                            blockWrapper.appendChild(hatBlock);
-                            scriptsDiv.appendChild(blockWrapper);
-                        }
-                    }
                 });
                 // append sprite tab
                 targetDiv.appendChild(targetButton);
+                // append script tab
+                setScriptWrappers(result, i);
             }
         });
     } else {
@@ -191,6 +137,82 @@ function forIdInput() {
         errorMessage.innerText='Whoops! Nothing here...';
         targetDiv.appendChild(errorMessage);
     }
+}
+
+// declare vars for setScriptWrappers()
+let blocksArray;
+let hatBlock;
+let hatBlockText;
+let hatBlockTextNew;
+let argNames;
+let checkbox;
+let blockWrapper;
+let targetScripts;
+
+function setScriptWrappers(result, targetNum) {
+    // declare/reset variables
+    blocksArray = Object.keys(result.targets[targetNum].blocks);
+    argNames=[];
+    // set up targetScripts wrapper
+    targetScripts=document.createElement('div');
+    targetScripts.id='target-scripts-'+targetNum;
+    targetScripts.style.display='none';
+    // loop through different blocks in a sprite
+    for (let i=0;i<blocksArray.length;i++) {
+        // if the noticed block is of the correct id
+        if (result.targets[targetNum].blocks[blocksArray[i]].opcode=='procedures_prototype') {
+            blockWrapper=document.createElement('div');
+            hatBlock=document.createElement('label');
+            checkbox=document.createElement('input');
+            // set attr for checkbox
+            checkbox.id=result.targets[targetNum].blocks[blocksArray[i]].parent;
+            checkbox.name=result.targets[targetNum].blocks[blocksArray[i]].parent;
+            checkbox.type='checkbox';
+            hatBlock.setAttribute('for', checkbox.name);
+            // set hatBlockText to a string for editing
+            hatBlockText=result.targets[targetNum].blocks[blocksArray[i]].mutation.proccode;
+            timesReplaced=0;
+            // different arguments in a custom block
+            argNames=result.targets[targetNum].blocks[blocksArray[i]].mutation.argumentnames.split(',');
+            hatBlockTextNew='define ';
+            // loop through and start changing the text
+            for (let i=0;i<hatBlockText.length;i++) {
+                // if the noticed char is a %
+                if (hatBlockText.charAt(i)=='%') {
+                    // if it is %s
+                    if (hatBlockText.charAt(i+1)=='s'||hatBlockText.charAt(i+1)=='n') {
+                        // replace and setup for scratchblocks
+                        hatBlockTextNew += '['+argNames[timesReplaced].replace(/"|\[|\]/g, '')+']';
+                        timesReplaced++;
+                        i++;
+                    // if it is %b
+                    } else {
+                        // replace and setup for scratchblocks
+                        hatBlockTextNew += '<'+argNames[timesReplaced].replace(/"|\[|\]/g, '')+'>';
+                        timesReplaced++;
+                        i++;
+                    }
+                } else {
+                    // append the last noticed character
+                    hatBlockTextNew += hatBlockText.charAt(i);
+                }
+            }
+            hatBlock.innerText=hatBlockTextNew;
+            blockWrapper.appendChild(checkbox);
+            blockWrapper.appendChild(hatBlock);
+            targetScripts.appendChild(blockWrapper);
+            scriptsDiv.appendChild(targetScripts);
+        }
+    }
+    let tempElement;
+    document.getElementById('target-'+targetNum).addEventListener('click', function() {
+        tempElement=document.getElementById('target-scripts-'+targetNum);
+        if (selected==targetNum) {
+            tempElement.style.display='flex';
+        } else {
+            tempElement.style.display='none';
+        }
+    });
 }
 
 screenChange(screen);
