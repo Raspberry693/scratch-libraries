@@ -48,6 +48,10 @@ hr {
     background: hsla(215, 100%, 65%, 1);
     color: white;
 }
+.target-button:disabled {
+    color:#575e7569;
+    border: 1px solid hsla(0, 0%, 0%, 0.062);
+}
 
 #input-wrapper {
     height:50px;
@@ -73,9 +77,11 @@ input[type='text']:focus {
     outline:rgba(77, 151, 255, 0.233) solid 3px;
 }
 
-#scripts {
+#scripts > div {
     height: calc(100% - 200px);
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 #warning {

@@ -1,7 +1,5 @@
 // DOM references
 const dynamic = document.createElement('div');
-// const scriptsDiv = document.getElementById('scripts');
-// const warn = document.getElementById('warning');
 
 // set up the screens
 var screen=0;
@@ -148,6 +146,7 @@ let argNames;
 let checkbox;
 let blockWrapper;
 let targetScripts;
+let toImport=[];
 
 function setScriptWrappers(result, targetNum) {
     // declare/reset variables
@@ -168,6 +167,10 @@ function setScriptWrappers(result, targetNum) {
             checkbox.id=result.targets[targetNum].blocks[blocksArray[i]].parent;
             checkbox.name=result.targets[targetNum].blocks[blocksArray[i]].parent;
             checkbox.type='checkbox';
+            checkbox.addEventListener('change', function() {
+                console.log(checkbox.value);
+                console.log(checkbox);
+            });
             hatBlock.setAttribute('for', checkbox.name);
             // set hatBlockText to a string for editing
             hatBlockText=result.targets[targetNum].blocks[blocksArray[i]].mutation.proccode;
@@ -176,41 +179,55 @@ function setScriptWrappers(result, targetNum) {
             argNames=result.targets[targetNum].blocks[blocksArray[i]].mutation.argumentnames.split(',');
             hatBlockTextNew='define ';
             // loop through and start changing the text
-            for (let i=0;i<hatBlockText.length;i++) {
+            for (let x=0;x<hatBlockText.length;x++) {
                 // if the noticed char is a %
-                if (hatBlockText.charAt(i)=='%') {
+                if (hatBlockText.charAt(x)=='%') {
                     // if it is %s
-                    if (hatBlockText.charAt(i+1)=='s'||hatBlockText.charAt(i+1)=='n') {
+                    if (hatBlockText.charAt(x+1)=='s'||hatBlockText.charAt(x+1)=='n') {
                         // replace and setup for scratchblocks
                         hatBlockTextNew += '['+argNames[timesReplaced].replace(/"|\[|\]/g, '')+']';
                         timesReplaced++;
-                        i++;
+                        x++;
                     // if it is %b
                     } else {
                         // replace and setup for scratchblocks
                         hatBlockTextNew += '<'+argNames[timesReplaced].replace(/"|\[|\]/g, '')+'>';
                         timesReplaced++;
-                        i++;
+                        x++;
                     }
                 } else {
                     // append the last noticed character
-                    hatBlockTextNew += hatBlockText.charAt(i);
+                    hatBlockTextNew += hatBlockText.charAt(x);
                 }
             }
             hatBlock.innerText=hatBlockTextNew;
             blockWrapper.appendChild(checkbox);
             blockWrapper.appendChild(hatBlock);
             targetScripts.appendChild(blockWrapper);
-            scriptsDiv.appendChild(targetScripts);
         }
     }
-    document.getElementById('target-'+targetNum).addEventListener('click', function() {
-        if (selected==targetNum) {
-            document.getElementById('target-scripts-'+targetNum).style.display='flex';
-        } else {
-            document.getElementById('target-scripts-'+targetNum).style.display='none';
+    if (targetScripts.children.length>0) {
+        // append the target script only if it has content
+        scriptsDiv.appendChild(targetScripts);
+    } else {
+        // otherwise disable the target button
+        document.getElementById('target-'+targetNum).disabled = true;
+    }
+    // add event listeners to the target buttons in turn that check if they are active
+    // this is to decide whether to display the scripts or not
+    document.getElementsByClassName('target-button')[targetNum].addEventListener('click', function() {
+        // set all script wrapper displays to none regardless of activity
+        for (let i=0;i<scriptsDiv.children.length;i++) {
+            if (document.getElementById('target-scripts-'+i)) {
+                document.getElementById('target-scripts-'+i).style.display='none';
+            }
+        }
+        // set the single active script wrapper to show
+        if (document.getElementById('target-scripts-'+selected)) {
+            document.getElementById('target-scripts-'+selected).style.display='flex';
         }
     });
 }
 
+// initial screen refresh
 screenChange(screen);
