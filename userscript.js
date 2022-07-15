@@ -115,7 +115,7 @@ function forIdInput() {
                 targetButton.id = 'target-'+i;
                 // when clicked set as .active and clear all other elements' class of .active
                 targetButton.addEventListener('click', function() {
-                    selected = this.id;
+                    selected = i;
                     document.querySelector('.active').classList.remove('active');
                     this.classList.add('active');
                 });
@@ -204,13 +204,11 @@ function setScriptWrappers(result, targetNum) {
             scriptsDiv.appendChild(targetScripts);
         }
     }
-    let tempElement;
     document.getElementById('target-'+targetNum).addEventListener('click', function() {
-        tempElement=document.getElementById('target-scripts-'+targetNum);
         if (selected==targetNum) {
-            tempElement.style.display='flex';
+            document.getElementById('target-scripts-'+targetNum).style.display='flex';
         } else {
-            tempElement.style.display='none';
+            document.getElementById('target-scripts-'+targetNum).style.display='none';
         }
     });
 }
