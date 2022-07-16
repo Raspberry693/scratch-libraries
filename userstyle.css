@@ -2,9 +2,6 @@ body {
     height: 90vh;
     font-family: Helvetica, sans-serif;
 }
-hr {
-    border:hsla(0, 0%, 0%, 0.15) solid 0.5px;
-}
 
 #modal {
     border:hsla(0, 0%, 0%, 0.15) solid 1px;

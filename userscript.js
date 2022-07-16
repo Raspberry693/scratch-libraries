@@ -163,7 +163,7 @@ function setScriptWrappers(result, targetNum) {
             blockWrapper=document.createElement('div');
             hatBlock=document.createElement('label');
             checkbox=document.createElement('input');
-            // set attr for checkbox
+            // set attr for checkbox and hatblock
             checkbox.id=result.targets[targetNum].blocks[blocksArray[i]].parent;
             checkbox.name=result.targets[targetNum].blocks[blocksArray[i]].parent;
             checkbox.type='checkbox';
