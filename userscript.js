@@ -167,10 +167,6 @@ function setScriptWrappers(result, targetNum) {
             checkbox.id=result.targets[targetNum].blocks[blocksArray[i]].parent;
             checkbox.name=result.targets[targetNum].blocks[blocksArray[i]].parent;
             checkbox.type='checkbox';
-            checkbox.addEventListener('change', function() {
-                console.log(checkbox.value);
-                console.log(checkbox);
-            });
             hatBlock.setAttribute('for', checkbox.name);
             // set hatBlockText to a string for editing
             hatBlockText=result.targets[targetNum].blocks[blocksArray[i]].mutation.proccode;
@@ -204,6 +200,17 @@ function setScriptWrappers(result, targetNum) {
             blockWrapper.appendChild(checkbox);
             blockWrapper.appendChild(hatBlock);
             targetScripts.appendChild(blockWrapper);
+            // add an event listener to each checkbox
+            let myTitle=hatBlock.innerText;
+            checkbox.addEventListener('change', function() {
+                // if it's checked, add it's block to an array to be imported, otherwise, remove it from the array
+                if (this.checked) {
+                    toImport.push({'id':this.id,'title':myTitle});
+                } else {
+                    toImport.pop(toImport.indexOf({'id':this.id,'title':myTitle}));
+                }
+                console.log(toImport);
+            });
         }
     }
     if (targetScripts.children.length>0) {
