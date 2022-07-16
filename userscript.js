@@ -217,7 +217,7 @@ function setScriptWrappers(result, targetNum) {
     // this is to decide whether to display the scripts or not
     document.getElementsByClassName('target-button')[targetNum].addEventListener('click', function() {
         // set all script wrapper displays to none regardless of activity
-        for (let i=0;i<scriptsDiv.children.length;i++) {
+        for (let i=0;i<targetDiv.children.length;i++) {
             if (document.getElementById('target-scripts-'+i)) {
                 document.getElementById('target-scripts-'+i).style.display='none';
             }
